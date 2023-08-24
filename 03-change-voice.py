@@ -10,15 +10,14 @@ video_uuid = json_filename.replace("output/", "").replace(".json", "")
 f = open(json_filename)
 subtitles = json.load(f)
 
-for i, subtitle in enumerate(subtitles):    
-    change_voice_command = "cd so-vits-svc-5.0 && python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk volodarsky.spk.npy --wave ../output/{video_uuid}/{i}.wav --shift 0".format(
-        video_uuid=video_uuid, i=i
-    )
-    
-    subprocess.call(change_voice_command, shell=True)
+change_voice_command = "cd so-vits-svc-5.0 && python svc_inference_batch.py --config configs/base.yaml --model sovits5.0.pth --spk volodarsky.spk.npy --wave ../output/{video_uuid}/ --shift 0".format(
+    video_uuid=video_uuid
+)
 
-    cp_command = "cp so-vits-svc-5.0/svc_out.wav output/{video_uuid}/{i}-vol.wav".format(
-        video_uuid=video_uuid, i=i
-    )
+subprocess.call(change_voice_command, shell=True)
 
-    subprocess.call(cp_command, shell=True)
+cp_command = "mv so-vits-svc-5.0/_svc_out/*.wav output/{video_uuid}/".format(
+    video_uuid=video_uuid
+)
+
+subprocess.call(cp_command, shell=True)

@@ -2,6 +2,7 @@ import uuid
 import subprocess
 import torch
 import json
+import sys
 
 from pytube import YouTube
 from faster_whisper import WhisperModel
@@ -18,7 +19,7 @@ def download_yt_video(link, filename):
     ).desc().first().download(output_path="./output/", filename=filename)
 
 
-YT_LINK = "https://www.youtube.com/watch?v=6XtuPck0b4U"
+yt_link = sys.argv[1]
 
 video_uuid = uuid.uuid4().hex
 video_filename = video_uuid + ".mp4"
@@ -27,7 +28,7 @@ audio_filename = video_uuid + ".wav"
 mkdir_command = "mkdir output/{video_uuid}".format(video_uuid=video_uuid)
 subprocess.call(mkdir_command, shell=True)
 
-download_yt_video(YT_LINK, video_filename)
+download_yt_video(yt_link, video_filename)
 
 ffmpeg_command = "ffmpeg -i ./output/{video_filename} -acodec pcm_s16le -ac 1 -ar 16000 ./output/{audio_filename}".format(
     video_filename=video_filename, audio_filename=audio_filename
@@ -71,7 +72,7 @@ model = AutoGPTQForCausalLM.from_quantized(
 
 
 def change_meaning(text):
-    prompt = "Change meaning of this sentence by changing couple words and make it parody, don't add more than 4 new words, reply only new text, no explanation. `{text}`".format(
+    prompt = "Change meaning of this sentence by changing some words and make it more funny, reply only new text, no explanation. `{text}`".format(
         text=text
     )
     prompt_template = f"""### HUMAN:
@@ -123,3 +124,5 @@ for subtitle in tqdm(subtitles):
 
 with open("output/" + video_uuid + ".json", "w", encoding="utf-8") as outfile:
     json.dump(subtitles, outfile, ensure_ascii=False)
+
+print(video_uuid)
