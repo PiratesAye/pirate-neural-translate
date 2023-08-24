@@ -72,9 +72,10 @@ model = AutoGPTQForCausalLM.from_quantized(
 
 
 def change_meaning(text):
-    prompt = "Change meaning of this sentence by changing some words and make it more funny, reply only new text, no explanation. `{text}`".format(
+    prompt = "Change meaning of this sentence to opposite by changing some words, reply only new text, no explanation. `{text}`".format(
         text=text
     )
+
     prompt_template = f"""### HUMAN:
     {prompt}
 
